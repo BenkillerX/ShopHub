@@ -1,11 +1,55 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../config/firebase";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  async function signUp(email: string, password:string) {
+    try {
+      setLoading(true)
+   const userInfo = await createUserWithEmailAndPassword(auth, email, password);
 
+      const {user} = userInfo;
+      await setDoc(doc(db, "ecommerceUsers", user.uid), {
+        email:user.email,
+        role:"user",
+        createdAt:serverTimestamp()
+      })
+      toast.success("Account Created Sucessfully")
+      navigate("/")
+      setEmail("")
+      setPassword("")
+    }  catch (error) {
+    if (error instanceof FirebaseError) {
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          toast.error("This email is already registered. Please log in instead.");
+          break;
+        case "auth/invalid-email":
+          toast.error("Invalid email format.");
+          break;
+        case "auth/weak-password":
+          toast.error("Password is too weak. Try a stronger one.");
+          break;
+        default:
+          toast.error("Something went wrong: " + error.message);
+      }
+    } else {
+      toast.error("Unexpected error occurred.");
+    }
+  } finally {
+    setLoading(false);
+  }
+  }
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -20,7 +64,11 @@ const Signup = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form className="space-y-5" 
+        onSubmit={(e) => {
+            e.preventDefault();
+            signUp(email, password);
+          }}>
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -65,6 +113,7 @@ const Signup = () => {
           <button
             type="submit"
             className="w-full bg-black text-white py-3 rounded-xl font-medium hover:bg-gray-800 transition"
+            disabled={loading}
           >
             Create Account
           </button>
@@ -87,12 +136,15 @@ const Signup = () => {
         </button>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-6">
+
+        <Link to="/login">
+          <p className="text-center text-sm text-gray-500 mt-6">
           Already have an account?{" "}
           <span className="font-medium text-black cursor-pointer hover:underline">
             Login
           </span>
         </p>
+        </Link>
       </div>
     </div>
   );

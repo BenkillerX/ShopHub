@@ -1,4 +1,12 @@
+import { signOut } from "firebase/auth";
+import { Link, Navigate } from "react-router-dom";
+import { auth } from "../../config/firebase";
+
 const Admin = () => {
+  const handleLogout =  async ()=>{
+      await signOut(auth);
+      <Navigate to="/"/>
+    }
   return (
     <div className="min-h-screen bg-gray-50 flex">
 
@@ -7,11 +15,16 @@ const Admin = () => {
         <h1 className="text-xl font-bold mb-8">Admin Panel</h1>
 
         <nav className="flex flex-col gap-4 text-gray-700 text-sm">
-          <a href="#" className="hover:text-black">Dashboard</a>
-          <a href="#" className="hover:text-black">Products</a>
-          <a href="#" className="hover:text-black">Orders</a>
-          <a href="#" className="hover:text-black">Users</a>
-          <a href="#" className="hover:text-black">Settings</a>
+          <Link to="#" className="hover:text-black">Dashboard</Link>
+          <Link to="#" className="hover:text-black">Products</Link>
+          <Link to="#" className="hover:text-black">Orders</Link><Link
+            to="#"
+            className="bg-black text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+           onClick={handleLogout} 
+          >
+            Log Out
+          </Link>
+
         </nav>
       </aside>
 
@@ -48,7 +61,7 @@ const Admin = () => {
 
             <input
               type="text"
-              placeholder="Category"
+              placeholder="Descrition"
               className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none"
             />
 
