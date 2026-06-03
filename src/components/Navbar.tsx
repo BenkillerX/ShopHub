@@ -1,38 +1,65 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../config/firebase";
 import type { User } from "firebase/auth";
+import { auth, db } from "../config/firebase";
+import { collection, onSnapshot } from "firebase/firestore";
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
-  const [firstLetter, setFirstLetter] = useState<string>('U')
-  const [user, setUser] = useState<User | null>(null)
+  const [firstLetter, setFirstLetter] = useState<string>("U");
+  const [user, setUser] = useState<User | null>(null);
+  const [cart, setCart] = useState<number | null>(null);
 
-  useEffect(()=>{
-    const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
-      setUser(currentUser)
-      if (currentUser && currentUser.displayName) {
-        const firstLetter = currentUser.displayName.trim().charAt(0).toUpperCase();
-        setFirstLetter(firstLetter)
-      }else if (currentUser?.email) {
-        setFirstLetter(currentUser.email.trim().charAt(0).toUpperCase())
-      }
-      else{
-        setFirstLetter('U')
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (currentUser?.displayName) {
+        setFirstLetter(currentUser.displayName.trim().charAt(0).toUpperCase());
+      } else if (currentUser?.email) {
+        setFirstLetter(currentUser.email.trim().charAt(0).toUpperCase());
+      } else {
+        setFirstLetter("U");
       }
     });
-    return () => unsubscribe();
-  },[])
-  const handleLogout = async ()=>{
-    await signOut(auth)
-    setUser(null)
-    setFirstLetter('U')
-  }
+    return () => unsubscribeAuth();
+  }, []);
+// Subscribe to Firestore when user is logged in
+useEffect(() => {
+  if (!user) return;
+
+  const cartRef = collection(db, "ecommerceCart", user.uid, "items");
+  const unsubscribeCart = onSnapshot(cartRef, (snapshot) => {
+    if (snapshot.empty) {
+      setCart(0); // safe here: inside external subscription callback
+      return;
+    }
+
+    let totalQuantity = 0;
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.quantity) {
+        totalQuantity += data.quantity;
+      }
+    });
+    setCart(totalQuantity);
+  });
+
+  return () => unsubscribeCart();
+}, [user]);
+
+
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+    setFirstLetter("U");
+    setCart(0);
+  };
+
   return (
     <nav className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-
         {/* Logo */}
         <Link to="/" className="text-xl font-bold text-black">
           ShopHub
@@ -56,7 +83,6 @@ const Navbar = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-4">
-
           {/* Auth */}
           <div className="flex items-center gap-3">
             {user ? (
@@ -85,31 +111,19 @@ const Navbar = () => {
           </div>
 
           {/* Cart */}
-          <button className="relative">
+          <Link to="/cart" className="relative">
             <span className="text-xl">🛒</span>
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-              0
-            </span>
-          </button>
+            {cart !== null && cart > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                {cart}
+              </span>
+            )}
+          </Link>
 
           {/* User Avatar */}
           <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold">
             {firstLetter}
           </div>
-        </div>
-      </div>
-
-      {/* Mobile Search */}
-      <div className="md:hidden px-4 pb-3">
-        <div className="flex w-full">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full border border-gray-300 rounded-l-xl px-4 py-2 outline-none"
-          />
-          <button className="bg-black text-white px-4 rounded-r-xl">
-            Search
-          </button>
         </div>
       </div>
     </nav>

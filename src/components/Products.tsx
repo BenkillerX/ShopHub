@@ -1,6 +1,6 @@
-import { collection, getDocs } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore"
 import { useEffect, useState } from "react"
-import { db } from "../config/firebase"
+import { auth, db } from "../config/firebase"
 import { toast } from "react-toastify"
 
 
@@ -8,13 +8,14 @@ interface ProductInfo {
   id: string;
   image: string | null;
   name: string | null;
-  Description: string;
-  Price: number;
+  description: string;
+  price: number;
 }
 
 const Products = () => {
   const [productList, setProductList] = useState<ProductInfo[]>([])
   const [loading, setLoading] = useState(false)
+  const [addedProductId, setAddedProductId] = useState<string | null>(null)
   const productsRef = collection(db, "ecommerceProducts")
  useEffect(()=>{
   const getProducts = async ()=>{
@@ -33,6 +34,35 @@ const Products = () => {
   }
   getProducts()
  }, []) 
+ async function addToCart(product:ProductInfo) {
+  setAddedProductId(product.id)
+  setTimeout(()=>{
+    setAddedProductId(null)
+  }, 2000)
+    const user = auth.currentUser
+    if (!user) {
+      toast.error('Login Or create Account First')
+      throw new Error('Users Must login first')
+    }
+    const cartItemRef = doc(db, "ecommerceCart", user.uid, "items", product.id)
+    console.log(cartItemRef);
+    
+    const existingItem = await getDoc(cartItemRef)
+     if (existingItem.exists()) {
+    // Update quantity
+    await updateDoc(cartItemRef, {
+      quantity: existingItem.data().quantity + 1,
+    });
+  } else {
+    // Add new item
+    await setDoc(cartItemRef, {
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      quantity: 1,
+    });
+  }
+ }
   return (
   <>
     <h1 className="text-3xl font-bold text-center my-8">DevBen Shop</h1>
@@ -89,12 +119,13 @@ const Products = () => {
                 {product.name}
               </h2>
               <p className="text-sm text-gray-600 mt-2 flex-grow">
-                {product.Description}
+                {product.description}
               </p>
               <h3 className="text-xl font-bold text-black mt-3">
-                ${product.Price}
+               ₦{product.price}
               </h3>
-              <button className="mt-4 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition">
+                {addedProductId === product.id  && toast.success("Added Sucessfully")}
+              <button className="mt-4 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition" onClick={()=>addToCart(product)}>
                 Add to Cart
               </button>
             </div>

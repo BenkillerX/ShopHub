@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify'
 import Admin from './components/admin/Admin'
 import { useAuthRole } from './hooks/useAuthRole'
 import ProtectedRoute from './components/ProtectedRoute'
+import Cart from './components/Cart'
 
 function App() {
   
@@ -24,6 +25,7 @@ function App() {
         <Route path='/' element={<Products/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<Signup/>}/>
+        <Route path='/cart' element={<Cart/>}/>
           <Route path='/admin' 
           element={         
           <ProtectedRoute user={user} role={role} requiredRole='admin'>
