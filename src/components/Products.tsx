@@ -34,35 +34,47 @@ const Products = () => {
   }
   getProducts()
  }, []) 
- async function addToCart(product:ProductInfo) {
-  setAddedProductId(product.id)
-  setTimeout(()=>{
-    setAddedProductId(null)
-  }, 2000)
-    const user = auth.currentUser
-    if (!user) {
-      toast.error('Login Or create Account First')
-      throw new Error('Users Must login first')
-    }
-    const cartItemRef = doc(db, "ecommerceCart", user.uid, "items", product.id)
-    console.log(cartItemRef);
-    
-    const existingItem = await getDoc(cartItemRef)
-     if (existingItem.exists()) {
-    // Update quantity
-    await updateDoc(cartItemRef, {
-      quantity: existingItem.data().quantity + 1,
-    });
-  } else {
-    // Add new item
-    await setDoc(cartItemRef, {
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: 1,
-    });
+ async function addToCart(product: ProductInfo) {
+  setAddedProductId(product.id);
+
+  const user = auth.currentUser;
+  if (!user) {
+    toast.error("Login or create an account first");
+    throw new Error("Users must login first");
   }
- }
+
+  const cartItemRef = doc(db, "ecommerceCart", user.uid, "items", product.id);
+  const existingItem = await getDoc(cartItemRef);
+
+  try {
+    if (existingItem.exists()) {
+      // Update quantity
+      await updateDoc(cartItemRef, {
+        quantity: existingItem.data().quantity + 1,
+      });
+    } else {
+      // Add new item
+      await setDoc(cartItemRef, {
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      });
+    }
+
+    // ✅ Show toast here, only once per add
+    toast.success("Added Successfully");
+  } catch (error) {
+    toast.error("Failed to add item");
+    console.error(error);
+  } finally {
+    // Reset highlight after 2s
+    setTimeout(() => {
+      setAddedProductId(null);
+    }, 2000);
+  }
+}
+
   return (
   <>
     <h1 className="text-3xl font-bold text-center my-8">DevBen Shop</h1>
@@ -109,11 +121,18 @@ const Products = () => {
             key={product.id}
             className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition flex flex-col"
           >
+          <div className="relative">
             <img
               src={product.image ?? ""}
               alt="Product Image"
               className="w-full h-56 object-cover"
             />
+            {addedProductId === product.id && (
+              <span className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                Added
+              </span>
+            )}
+          </div>
             <div className="p-4 flex flex-col flex-grow">
               <h2 className="text-lg font-semibold text-gray-900">
                 {product.name}
@@ -124,7 +143,6 @@ const Products = () => {
               <h3 className="text-xl font-bold text-black mt-3">
                ₦{product.price}
               </h3>
-                {addedProductId === product.id  && toast.success("Added Sucessfully")}
               <button className="mt-4 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition" onClick={()=>addToCart(product)}>
                 Add to Cart
               </button>
