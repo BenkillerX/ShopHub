@@ -1,7 +1,8 @@
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth, db } from "../config/firebase";
-import { collection, onSnapshot, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, onSnapshot, doc, updateDoc, deleteDoc, getDocs, writeBatch } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 interface CartItem {
   id: string;
@@ -49,7 +50,7 @@ useEffect(() => {
     const itemRef = doc(db, "ecommerceCart", user.uid, "items", item.id);
 
     if (newQty <= 0) {
-      await deleteDoc(itemRef); // remove item if qty is 0
+      await deleteDoc(itemRef);
     } else {
       await updateDoc(itemRef, { quantity: newQty });
     }
@@ -59,6 +60,50 @@ useEffect(() => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+const proceedToCheckout = async () => {
+  if (!user) {
+    toast.warn("Please login first");
+    return;
+  }
+
+  if (cartItems.length === 0) {
+    toast.warn("Your cart is empty");
+    return;
+  }
+
+  // Build WhatsApp message
+  let message = "Hello, I want to place an order:\n\n";
+  cartItems.forEach((item) => {
+    message += `- ${item.name} (₦${item.price} × ${item.quantity}) = ₦${item.price * item.quantity}\n`;
+  });
+  message += `\nSubtotal: ₦${subtotal}\n\nPlease confirm availability.`;
+
+  const encodedMessage = encodeURIComponent(message);
+  const phoneNumber = "2348033885711"; 
+
+  // Open WhatsApp
+  window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
+
+  // 🔹 Clear cart in Firestore
+  try {
+    const cartRef = collection(db, "ecommerceCart", user.uid, "items");
+    // Better: use getDocs to fetch all items
+    const itemsSnapshot = await getDocs(cartRef);
+    const batch = writeBatch(db);
+    itemsSnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+
+    // Reset local state
+    setCartItems([]);
+    toast.success("Cart has been cleared after checkout");
+  } catch (error) {
+    console.error("Error clearing cart:", error);
+    toast.error("Failed to clear cart after checkout");
+  }
+};
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -84,7 +129,7 @@ useEffect(() => {
                   <div>
                     <h2 className="font-semibold">{item.name}</h2>
                     <p className="text-sm text-gray-600">
-                      ₦{item.price} &times; {item.quantity}
+                      ₦{Number(item.price).toLocaleString()} &times; {item.quantity}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
                       <button
@@ -103,7 +148,7 @@ useEffect(() => {
                     </div>
                   </div>
                 </div>
-                <p className="font-bold">₦{item.price * item.quantity}</p>
+                <p className="font-bold">₦{Number(item.price * item.quantity).toLocaleString() }</p>
               </li>
             ))}
           </ul>
@@ -116,7 +161,7 @@ useEffect(() => {
         <div className="space-y-2 text-gray-700">
           <div className="flex justify-between">
             <span>Subtotal</span>
-            <span>₦{subtotal}</span>
+            <span>₦{Number(subtotal).toLocaleString()}</span>
           </div>
           <div className="flex justify-between">
             <span>Shipping</span>
@@ -124,10 +169,11 @@ useEffect(() => {
           </div>
           <div className="flex justify-between font-bold text-black border-t pt-2">
             <span>Total</span>
-            <span>₦{subtotal}</span>
+            <span>₦{Number(subtotal).toLocaleString()}</span>
           </div>
         </div>
-        <button className="mt-6 w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
+        <button className="mt-6 w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
+        onClick={proceedToCheckout}>
           Proceed to Checkout
         </button>
       </div>

@@ -10,7 +10,6 @@ const Navbar = () => {
   const [firstLetter, setFirstLetter] = useState<string>("U");
   const [user, setUser] = useState<User | null>(null);
   const [cart, setCart] = useState<number | null>(null);
-
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -31,7 +30,7 @@ useEffect(() => {
   const cartRef = collection(db, "ecommerceCart", user.uid, "items");
   const unsubscribeCart = onSnapshot(cartRef, (snapshot) => {
     if (snapshot.empty) {
-      setCart(0); // safe here: inside external subscription callback
+      setCart(0); 
       return;
     }
 
@@ -126,6 +125,7 @@ useEffect(() => {
           </div>
         </div>
       </div>
+      
     </nav>
   );
 };

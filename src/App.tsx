@@ -8,6 +8,7 @@ import Admin from './components/admin/Admin'
 import { useAuthRole } from './hooks/useAuthRole'
 import ProtectedRoute from './components/ProtectedRoute'
 import Cart from './components/Cart'
+import Footer from './components/Footer'
 
 function App() {
   
@@ -33,6 +34,7 @@ function App() {
           </ProtectedRoute>
           }/>
       </Routes>
+      <Footer/>
     </>
   )
 }

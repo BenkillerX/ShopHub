@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../config/firebase";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, db, googleProvider } from "../config/firebase";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
@@ -50,6 +50,32 @@ const Signup = () => {
     setLoading(false);
   }
   }
+
+ async function GoogleSignUp() {
+  try {
+    setLoading(true);
+
+    const result = await signInWithPopup(auth, googleProvider); // <-- await here
+    const { user } = result;
+
+    await setDoc(doc(db, "ecommerceUsers", user.uid), {
+      email: user.email,
+      fullName: user.displayName,
+      photoURL: user.photoURL,
+      role: "user",
+      createdAt: serverTimestamp(),
+    });
+
+    toast.success("Signed up with Google");
+    navigate("/");
+  } catch (error) {
+    console.error("Error Signing Up", error);
+    toast.error("Error signing up");
+  } finally {
+    setLoading(false);
+  }
+}
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -130,6 +156,7 @@ const Signup = () => {
         <button
           type="button"
           className="w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-xl hover:bg-gray-50 transition font-medium text-gray-700"
+          onClick={GoogleSignUp}
         >
           <FaGoogle />
           Continue with Google
