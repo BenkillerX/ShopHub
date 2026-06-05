@@ -47,6 +47,7 @@ const Products = () => {
   const user = auth.currentUser;
   if (!user) {
     toast.error("Login or create an account first");
+   setAddedProductId(null)
     throw new Error("Users must login first");
   }
 

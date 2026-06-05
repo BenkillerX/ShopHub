@@ -9,7 +9,7 @@ const Admin = () => {
 
   const handleLogout = async () => {
     await signOut(auth);
-    window.location.href = "/"; 
+    window.location.href= '/'
   };
 
   return (
