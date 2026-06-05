@@ -4,6 +4,8 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth, db } from "../config/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
+import { FaShoppingCart } from "react-icons/fa";
+import { FiUser } from "react-icons/fi";
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
@@ -65,7 +67,7 @@ useEffect(() => {
         </Link>
 
         {/* Search */}
-        <div className="hidden md:flex flex-1 max-w-xl">
+        <div className="md:flex flex-1 max-w-xl">
           <div className="flex w-full">
             <input
               type="text"
@@ -87,7 +89,7 @@ useEffect(() => {
             {user ? (
               <button
                 onClick={handleLogout}
-                className="text-sm text-gray-700 hover:text-black transition border border-[1px] border-black px-4 py-2 rounded-xl"
+                className="hidden md:flex text-sm text-gray-700 hover:text-black transition border border-[1px] border-black px-4 py-2 rounded-xl"
               >
                 Logout
               </button>
@@ -95,13 +97,13 @@ useEffect(() => {
               <>
                 <Link
                   to="/login"
-                  className="text-sm text-gray-700 hover:text-black transition border border-[1px] border-black px-4 py-2 rounded-xl"
+                  className="hidden md:flex text-sm text-gray-700 hover:text-black transition border border-[1px] border-black px-4 py-2 rounded-xl"
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="text-sm bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition"
+                  className="hidden md:flex text-sm bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition"
                 >
                   Sign Up
                 </Link>
@@ -110,8 +112,8 @@ useEffect(() => {
           </div>
 
           {/* Cart */}
-          <Link to="/cart" className="relative">
-            <span className="text-xl">🛒</span>
+          <Link to="/cart" className="relative hidden md:flex">
+            <span className="text-xl"><FaShoppingCart /></span>
             {cart !== null && cart > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                 {cart}
@@ -120,9 +122,18 @@ useEffect(() => {
           </Link>
 
           {/* User Avatar */}
-          <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold">
-            {firstLetter}
-          </div>
+         {user ? (
+          <Link to="/account">
+             <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold">
+          {firstLetter}
+           </div>
+          </Link>
+         
+        ) : (
+        <Link to="/account" className="w-9 h-9 flex items-center justify-center text-xl">
+          <FiUser />
+        </Link>
+        )}
         </div>
       </div>
       

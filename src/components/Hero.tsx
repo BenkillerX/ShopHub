@@ -1,3 +1,6 @@
+import { FiShield, FiTruck } from "react-icons/fi"
+import { MdVerified } from "react-icons/md"
+
 const Hero = () => {
   return (
     <section className="relative min-h-[70vh] bg-gradient-to-r from-gray-900 via-black to-gray-800 text-white ">
@@ -22,24 +25,18 @@ const Hero = () => {
 
           {/* Trust Badges */}
           <div className="mt-10 flex flex-wrap gap-6 justify-center lg:justify-start text-sm text-gray-400">
+              <span className="flex items-center gap-2">
+              <FiTruck className="text-emerald-400" size={30}/>
+                Free Delivery
+          </span>
             <span className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M3 3h18v18H3V3z" />
-              </svg>
-              Free Delivery
-            </span>
-            <span className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M12 1l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z" />
-              </svg>
+          <FiShield className="text-emerald-400" size={30}/>
               Secure Payments
-            </span>
-            <span className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M5 13l4 4L19 7" />
-              </svg>
-              Quality Guaranteed
-            </span>
+          </span>
+          <span className="flex items-center gap-2">
+            <MdVerified className="text-emerald-400 text-lg" size={30}/>
+            Quality Guaranteed
+          </span>
           </div>
         </div>
 

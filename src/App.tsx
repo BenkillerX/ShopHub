@@ -9,6 +9,8 @@ import { useAuthRole } from './hooks/useAuthRole'
 import ProtectedRoute from './components/ProtectedRoute'
 import Cart from './components/Cart'
 import Footer from './components/Footer'
+import BottomNav from './components/BottomNav'
+import Accounts from './components/Accounts'
 
 function App() {
   
@@ -41,7 +43,9 @@ function App() {
             <Admin/>
           </ProtectedRoute>
           }/>
+          <Route path='/account' element={<Accounts/>}/>
       </Routes>
+      <BottomNav/>
       <Footer/>
     </>
   )
