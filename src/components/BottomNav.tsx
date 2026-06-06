@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { FaHome, FaShoppingCart, FaUser } from "react-icons/fa";
 
-const BottomNav = () => {
+interface ProductsProps {
+  cart: number;
+}
+const BottomNav = ({cart,}:ProductsProps) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 h-14 bg-white border-t flex justify-around items-center md:hidden">
 
@@ -12,7 +15,9 @@ const BottomNav = () => {
 
       <Link to="/cart" className="flex flex-col items-center text-xs text-gray-700">
         <FaShoppingCart size={20} />
-        Cart
+       <span className="absolute -top-3 -right-3 bg-gray-800 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+        {cart}
+      </span>
       </Link>
 
       <Link to="/account" className="flex flex-col items-center text-xs text-gray-700">

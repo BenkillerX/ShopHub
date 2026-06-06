@@ -10,11 +10,12 @@ import { FiUser } from "react-icons/fi";
 interface ProductsProps {
   search: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
+  cart: number;
+  setCart: React.Dispatch<React.SetStateAction<number>>;
 }
-const Navbar = ({search, setSearch}:ProductsProps) => {
+const Navbar = ({search, setSearch, cart, setCart}:ProductsProps) => {
   const [firstLetter, setFirstLetter] = useState<string>("U");
   const [user, setUser] = useState<User | null>(null);
-  const [cart, setCart] = useState<number | null>(null);
   const navigate = useNavigate()
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -29,6 +30,7 @@ const Navbar = ({search, setSearch}:ProductsProps) => {
     });
     return () => unsubscribeAuth();
   }, []);
+
 useEffect(() => {
   if (!user) return;
 
@@ -131,11 +133,14 @@ useEffect(() => {
           {/* Cart */}
           <Link to="/cart" className="relative hidden md:flex">
             <span className="text-xl"><FaShoppingCart /></span>
-            {cart !== null && cart > 0 && (
+            {/* {cart > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                 {cart}
               </span>
-            )}
+            )} */}
+       <span className="absolute -top-3 -right-3 bg-gray-800 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+        {cart}
+      </span>
           </Link>
 
           {/* User Avatar */}

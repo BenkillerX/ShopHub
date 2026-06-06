@@ -22,6 +22,8 @@ function App() {
   
   const {user, role, loading} = useAuthRole();
   const [search, setSearch]= useState<string>("")
+
+  const [cart, setCart] = useState<number>(0);
  if (loading) {
   return (
     <LoaderSpinner/>
@@ -31,7 +33,7 @@ function App() {
 
   return (
     <>
-    <Navbar search={search} setSearch={setSearch}/>
+    <Navbar search={search} setSearch={setSearch} cart={cart} setCart={setCart}/>
     <ToastContainer/>
     <Suspense fallback={
     <LoaderSpinner/>
@@ -53,7 +55,7 @@ function App() {
       </Routes>
     </Suspense>
       
-      <BottomNav/>
+      <BottomNav cart={cart}/>
       <Footer/>
       <BackToTop/>
     </>
