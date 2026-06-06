@@ -13,38 +13,53 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 p-5 hidden md:block">
-        <h1 className="text-xl font-bold mb-8">Admin Panel</h1>
+<aside className="w-full md:w-64 bg-white border-b md:border-r border-gray-200 p-4 md:p-5">
+  
+  {/* Mobile header */}
+  <div className="flex justify-between items-center md:block">
+    <h1 className="text-lg md:text-xl font-bold">Admin Panel</h1>
+  </div>
 
-        <nav className="flex flex-col gap-4 text-gray-700 text-sm">
-          <button
-            onClick={() => setActiveTab("dashboard")}
-            className={`text-left hover:text-black ${activeTab === "dashboard" ? "font-bold text-black" : ""}`}
-          >
-            Dashboard
-          </button>
-          <button
-            onClick={() => setActiveTab("products")}
-            className={`text-left hover:text-black ${activeTab === "products" ? "font-bold text-black" : ""}`}
-          >
-            Products
-          </button>
-          <button
-            onClick={() => setActiveTab("orders")}
-            className={`text-left hover:text-black ${activeTab === "orders" ? "font-bold text-black" : ""}`}
-          >
-            Orders
-          </button>
-          <button
-            onClick={handleLogout}
-            className="bg-black text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
-          >
-            Log Out
-          </button>
-        </nav>
-      </aside>
+  {/* Nav */}
+  <nav className="flex md:flex-col gap-2 md:gap-4 mt-4 text-sm overflow-x-auto">
+    
+    <button
+      onClick={() => setActiveTab("dashboard")}
+      className={`px-3 py-2 whitespace-nowrap ${
+        activeTab === "dashboard" ? "font-bold text-black" : "text-gray-600"
+      }`}
+    >
+      Dashboard
+    </button>
+
+    <button
+      onClick={() => setActiveTab("products")}
+      className={`px-3 py-2 whitespace-nowrap ${
+        activeTab === "products" ? "font-bold text-black" : "text-gray-600"
+      }`}
+    >
+      Products
+    </button>
+
+    <button
+      onClick={() => setActiveTab("orders")}
+      className={`px-3 py-2 whitespace-nowrap ${
+        activeTab === "orders" ? "font-bold text-black" : "text-gray-600"
+      }`}
+    >
+      Orders
+    </button>
+
+    <button
+      onClick={handleLogout}
+      className="ml-auto md:ml-0 bg-black text-white px-4 py-2 rounded-lg"
+    >
+      Log Out
+    </button>
+  </nav>
+</aside>
 
       {/* Main Content */}
       <main className="flex-1 p-6">
