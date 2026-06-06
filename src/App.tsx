@@ -13,6 +13,7 @@ import BottomNav from './components/BottomNav'
 import Accounts from './components/Accounts'
 import { useState } from 'react'
 import Search from './components/Search'
+import BackToTop from './components/BackToTop'
 
 function App() {
   
@@ -50,6 +51,7 @@ function App() {
       </Routes>
       <BottomNav/>
       <Footer/>
+      <BackToTop/>
     </>
   )
 }
