@@ -86,10 +86,10 @@ useEffect(() => {
                   handleSearch()
                 }
               }}
-              placeholder="Search products..."
+              placeholder="Search..."
               className="w-full border border-gray-300 rounded-l-xl px-4 py-2 outline-none focus:ring-2 focus:ring-black transition"
             />
-            <button className="bg-black text-white px-3 md:px-5 rounded-r-xl hover:bg-gray-800 transition"
+            <button className="bg-black text-white text-sm md:text-base px-3 md:px-5 rounded-r-xl hover:bg-gray-800 transition"
             onClick={handleSearch}
             >
               Search
