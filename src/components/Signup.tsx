@@ -60,7 +60,7 @@ const Signup = () => {
   try {
     setLoading(true);
 
-    const result = await signInWithPopup(auth, googleProvider); // <-- await here
+    const result = await signInWithPopup(auth, googleProvider);
     const { user } = result;
 
     await setDoc(doc(db, "ecommerceUsers", user.uid), {

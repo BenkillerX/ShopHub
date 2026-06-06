@@ -27,7 +27,7 @@ const BackToTop = () => {
     <button
     onClick={scrollToTop}
     className="
-    fixed bottom-4 right-4 
+    fixed bottom-4 right-1 
     sm:bottom-6 sm:right-6
     bg-black text-white 
     p-2 sm:p-3 

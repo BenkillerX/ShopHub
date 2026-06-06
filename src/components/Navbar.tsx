@@ -4,7 +4,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth, db } from "../config/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaSearch, FaShoppingCart } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 
 interface ProductsProps {
@@ -89,10 +89,12 @@ useEffect(() => {
               placeholder="Search..."
               className="w-full border border-gray-300 rounded-l-xl px-4 py-2 outline-none focus:ring-2 focus:ring-black transition"
             />
-            <button className="bg-black text-white text-sm md:text-base px-3 md:px-5 rounded-r-xl hover:bg-gray-800 transition"
-            onClick={handleSearch}
-            >
-              Search
+            <button
+                className="bg-black text-white px-3 md:px-5 rounded-r-xl hover:bg-gray-800 transition flex items-center justify-center"
+                onClick={handleSearch}
+              >
+              <FaSearch className="block md:hidden"/>
+              <span className="hidden md:block">Search</span>
             </button>
           </div>
         </div>
