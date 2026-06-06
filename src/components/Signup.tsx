@@ -14,6 +14,11 @@ const Signup = () => {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   async function signUp(email: string, password:string) {
+    if (!email.trim()) {
+      toast.error("Email is required");
+      return;
+    }
+
     try {
       setLoading(true)
    const userInfo = await createUserWithEmailAndPassword(auth, email, password);
@@ -69,8 +74,23 @@ const Signup = () => {
     toast.success("Signed up with Google");
     navigate("/");
   } catch (error) {
-    console.error("Error Signing Up", error);
-    toast.error("Error signing up");
+    if (error instanceof FirebaseError) {
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          toast.error("This email is already registered. Please log in instead.");
+          break;
+        case "auth/invalid-email":
+          toast.error("Invalid email format.");
+          break;
+        case "auth/weak-password":
+          toast.error("Password is too weak. Try a stronger one.");
+          break;
+        default:
+          toast.error("Something went wrong: " + error.message);
+      }
+    } else {
+      toast.error("Unexpected error occurred.");
+    }
   } finally {
     setLoading(false);
   }
@@ -138,10 +158,12 @@ const Signup = () => {
           {/* Sign Up Button */}
           <button
             type="submit"
-            className="w-full bg-black text-white py-3 rounded-xl font-medium hover:bg-gray-800 transition"
+            className={`w-full bg-black text-white py-3 rounded-xl font-medium hover:bg-gray-800 transition  ${
+  loading ? "opacity-50 cursor-not-allowed" : ""
+}`}
             disabled={loading}
           >
-            Create Account
+            {loading ? "Creating..." :"Create Account"}
           </button>
         </form>
 
@@ -155,11 +177,14 @@ const Signup = () => {
         {/* Google Button */}
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-xl hover:bg-gray-50 transition font-medium text-gray-700"
+          className={`w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-xl hover:bg-gray-50 transition font-medium text-gray-700  ${
+  loading ? "opacity-50 cursor-not-allowed" : ""
+}`}
           onClick={GoogleSignUp}
+          disabled={loading}
         >
           <FaGoogle />
-          Continue with Google
+          {loading? "Creating" : "Continue with Google"}
         </button>
 
         {/* Footer */}
