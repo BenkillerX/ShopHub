@@ -43,7 +43,7 @@ const Hero = () => {
         {/* Right Image */}
         <div className="mt-12 lg:mt-0 lg:ml-12">
           <img
-            src="/Hero-Banner2.jpg"
+            src="/Banner.jpg"
             alt="Shop gadgets"
             className="rounded-2xl shadow-2xl ring-1 ring-white/10 transition-transform duration-500 hover:scale-105"
           />
