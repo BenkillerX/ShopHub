@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
@@ -7,11 +7,15 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { FaShoppingCart } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 
-const Navbar = () => {
-  const [search, setSearch] = useState("");
+interface ProductsProps {
+  search: string;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
+}
+const Navbar = ({search, setSearch}:ProductsProps) => {
   const [firstLetter, setFirstLetter] = useState<string>("U");
   const [user, setUser] = useState<User | null>(null);
   const [cart, setCart] = useState<number | null>(null);
+  const navigate = useNavigate()
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -25,7 +29,6 @@ const Navbar = () => {
     });
     return () => unsubscribeAuth();
   }, []);
-// Subscribe to Firestore when user is logged in
 useEffect(() => {
   if (!user) return;
 
@@ -58,6 +61,11 @@ useEffect(() => {
     setCart(0);
   };
 
+  function handleSearch() {
+    if (search.trim() === "") return
+      navigate(`/search?query=${search}`)
+      setSearch("")
+  }
   return (
     <nav className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
@@ -73,10 +81,17 @@ useEffect(() => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e)=>{
+                if (e.key === "Enter") {
+                  handleSearch()
+                }
+              }}
               placeholder="Search products..."
               className="w-full border border-gray-300 rounded-l-xl px-4 py-2 outline-none focus:ring-2 focus:ring-black transition"
             />
-            <button className="bg-black text-white px-5 rounded-r-xl hover:bg-gray-800 transition">
+            <button className="bg-black text-white px-3 md:px-5 rounded-r-xl hover:bg-gray-800 transition"
+            onClick={handleSearch}
+            >
               Search
             </button>
           </div>

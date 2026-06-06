@@ -11,11 +11,13 @@ import Cart from './components/Cart'
 import Footer from './components/Footer'
 import BottomNav from './components/BottomNav'
 import Accounts from './components/Accounts'
+import { useState } from 'react'
+import Search from './components/Search'
 
 function App() {
   
   const {user, role, loading} = useAuthRole();
-  
+  const [search, setSearch]= useState<string>("")
  if (loading) {
   return (
     <div className="flex items-center justify-center h-screen bg-gray-50">
@@ -30,7 +32,7 @@ function App() {
 
   return (
     <>
-    <Navbar/>
+    <Navbar search={search} setSearch={setSearch}/>
     <ToastContainer/>
       <Routes>
         <Route path='/' element={<Products/>}/>
@@ -44,6 +46,7 @@ function App() {
           </ProtectedRoute>
           }/>
           <Route path='/account' element={<Accounts/>}/>
+          <Route path='/search' element={<Search/>}/>
       </Routes>
       <BottomNav/>
       <Footer/>

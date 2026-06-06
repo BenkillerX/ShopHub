@@ -10,6 +10,7 @@ interface ProductInfo {
   description: string;
   price: number;
 }
+
 const Products = () => {
   const [productList, setProductList] = useState<ProductInfo[]>([])
   const [loading, setLoading] = useState(true)
@@ -17,7 +18,6 @@ const Products = () => {
   const [error, setError] = useState<string | null>(null)
 
   
-
  useEffect(()=>{
   const getProducts = async ()=>{
     try {
@@ -78,10 +78,8 @@ const Products = () => {
     }, 2000);
   }
 }
-  
   return (
   <>
-  
     <Hero/>
     {error && <p className="text-red-500">{error}</p>}
     <section className="max-w-7xl mx-auto px-4 mt-10" id="shop">
@@ -94,7 +92,7 @@ const Products = () => {
     </p>
     <div className="mt-4 h-1 w-20 bg-emerald-500 mx-auto rounded"></div>
   </div>
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4  gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4">
     {loading ? (
     Array.from({ length: 6 }).map((_, i) => (
       <div
