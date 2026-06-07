@@ -13,11 +13,17 @@ const BottomNav = ({cart,}:ProductsProps) => {
         Home
       </Link>
 
-      <Link to="/cart" className="flex flex-col items-center text-xs text-gray-700">
+        <Link
+        to="/cart"
+        className="relative flex flex-col items-center text-xs text-gray-700"
+      >
         <FaShoppingCart size={20} />
-       <span className="absolute -top-3 -right-3 bg-gray-800 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-        {cart}
-      </span>
+
+        {cart > 0 && (
+          <span className="absolute -top-2 -right-2 bg-gray-800 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+            {cart}
+          </span>
+        )}
       </Link>
 
       <Link to="/account" className="flex flex-col items-center text-xs text-gray-700">
