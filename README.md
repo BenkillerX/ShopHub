@@ -43,25 +43,6 @@ ShopHub is a modern ecommerce web application built with React, TypeScript, Fire
 * Firebase Authentication
 * Cloud Firestore
 
-## Project Structure
-
-src/
-├── components/
-│ ├── admin/
-│ ├── Navbar.tsx
-│ ├── Footer.tsx
-│ ├── BottomNav.tsx
-│ ├── Products.tsx
-│ ├── Cart.tsx
-│ ├── Login.tsx
-│ ├── Signup.tsx
-│ ├── Search.tsx
-│ └── Accounts.tsx
-├── hooks/
-├── config/
-├── App.tsx
-└── main.tsx
-
 ## Installation
 
 1. Clone the repository
