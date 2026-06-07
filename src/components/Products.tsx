@@ -116,6 +116,10 @@ const Products = () => {
           <img
             src={product.image ?? ""}
             alt={product.name ?? "Product"}
+            loading="lazy"
+            onError={(e) => {
+            e.currentTarget.src = "/Placeholder.jpg";
+            }}
             className="h-48 w-full object-contain p-4"
           />
           {addedProductId === product.id && (
