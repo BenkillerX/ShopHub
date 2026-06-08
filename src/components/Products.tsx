@@ -82,7 +82,7 @@ const Products = () => {
   <>
     <Hero/>
     {error && <p className="text-red-500">{error}</p>}
-    <section className="max-w-7xl mx-auto px-4 mt-10" id="shop">
+    <section className="max-w-7xl mx-auto px-4 mt-10 mb-16" id="shop">
       <div className="text-center mb-10">
     <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
       Trending Products
