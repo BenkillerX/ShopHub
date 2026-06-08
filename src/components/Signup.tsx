@@ -46,7 +46,9 @@ const Signup = () => {
           toast.error("Password is too weak. Try a stronger one.");
           break;
         default:
-          toast.error("Something went wrong: " + error.message);
+          console.log(error.code);
+          console.log(error.message);
+          toast.error(error.code);
       }
     } else {
       toast.error("Unexpected error occurred.");
@@ -178,8 +180,8 @@ const Signup = () => {
         <button
           type="button"
           className={`w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-xl hover:bg-gray-50 transition font-medium text-gray-700  ${
-  loading ? "opacity-50 cursor-not-allowed" : ""
-}`}
+          loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           onClick={GoogleSignUp}
           disabled={loading}
         >
