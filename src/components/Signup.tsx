@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "../config/firebase";
-import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { setDoc, doc, serverTimestamp, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
@@ -58,22 +58,28 @@ const Signup = () => {
   }
   }
 
- async function GoogleSignUp() {
+
+async function GoogleSignUp() {
   try {
     setLoading(true);
 
     const result = await signInWithPopup(auth, googleProvider);
     const { user } = result;
 
-    await setDoc(doc(db, "ecommerceUsers", user.uid), {
-      email: user.email,
-      fullName: user.displayName,
-      photoURL: user.photoURL,
-      role: "user",
-      createdAt: serverTimestamp(),
-    });
+    const ref = doc(db, "ecommerceUsers", user.uid);
+    const snap = await getDoc(ref);
 
-    toast.success("Signed up with Google");
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        email: user.email,
+        fullName: user.displayName,
+        photoURL: user.photoURL,
+        role: "user",
+        createdAt: serverTimestamp(),
+      });
+    }
+
+    toast.success("Logged in with Google");
     navigate("/");
   } catch (error) {
     if (error instanceof FirebaseError) {
@@ -88,7 +94,9 @@ const Signup = () => {
           toast.error("Password is too weak. Try a stronger one.");
           break;
         default:
-          toast.error("Something went wrong: " + error.message);
+          console.log(error.code);
+          console.log(error.message);
+          toast.error(error.code);
       }
     } else {
       toast.error("Unexpected error occurred.");
@@ -97,7 +105,6 @@ const Signup = () => {
     setLoading(false);
   }
 }
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
